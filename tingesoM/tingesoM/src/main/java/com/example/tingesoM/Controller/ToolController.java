@@ -1,21 +1,16 @@
 package com.example.tingesoM.Controller;
 
 import com.example.tingesoM.Dtos.CreateToolDto;
-import com.example.tingesoM.Dtos.InitialCondition;
 import com.example.tingesoM.Dtos.ToolRankingDto;
 import com.example.tingesoM.Dtos.ToolStatusDto;
 import com.example.tingesoM.Entities.Tool;
-import com.example.tingesoM.Repositorie.CardexRepositorie;
-import com.example.tingesoM.Service.Interface.CardexService;
 import com.example.tingesoM.Service.ServiceImpl.CardexServiceImpl;
 import com.example.tingesoM.Service.ServiceImpl.ToolServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController

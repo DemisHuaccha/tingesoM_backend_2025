@@ -13,12 +13,9 @@ import java.util.List;
 
 public interface CardexService {
 
-    Cardex findById(Long id);
-    List<Cardex> findAll();
     List<CardexDto> findForRangeDate(LocalDate start, LocalDate end);
     List<CardexDto> findCardexTool(Long toolId);
     List<CardexDto> findAllDto();
-
 
     /**/
     void saveCardexUpdateTool(CreateToolDto toolDto, Tool tool);

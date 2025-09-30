@@ -27,10 +27,6 @@ public class CardexServiceImpl implements CardexService {
 
     //Create
 
-    public void save(Cardex cardex) {
-        cardexRepositorie.save(cardex);
-    }
-
     /*Create cardex for loan*/
 
     //Register loan
@@ -231,14 +227,6 @@ public class CardexServiceImpl implements CardexService {
 
 
     //Read
-    @Override
-    public Cardex findById(Long id){
-        return cardexRepositorie.findById(id).orElse(null);
-    }
-    @Override
-    public List<Cardex> findAll() {
-        return cardexRepositorie.findAll();
-    }
 
     @Override
     public  List<CardexDto> findAllDto(){
@@ -267,7 +255,5 @@ public class CardexServiceImpl implements CardexService {
         return cardexRepositorie.findCardexByToolId(toolId);
     }
 
-    //Update
 
-    //Delete
 }

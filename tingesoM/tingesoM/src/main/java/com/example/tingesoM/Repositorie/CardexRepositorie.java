@@ -57,9 +57,16 @@ public interface CardexRepositorie extends JpaRepository<Cardex,Long> {
 
 
     //Find cardex of tool by id
-    @Query("SELECT new com.example.tingesoM.Dtos.CardexDto(" +
-            "        c.id, c.moveDate, c.typeMove, c.description, c.amount, c.quantity,c.user.email,c.tool.idTool,c.loan.loanId,c.client.rut)" +
-            " FROM Cardex c WHERE c.tool.idTool = :toolId ORDER BY c.moveDate DESC")
+    @Query("""
+    SELECT new com.example.tingesoM.Dtos.CardexDto(
+        c.id, c.moveDate, c.typeMove, c.description, c.amount, c.quantity,c.user.email,c.tool.idTool,c.loan.loanId,c.client.rut)
+    FROM Cardex c 
+    LEFT JOIN c.tool t
+    LEFT JOIN c.loan l
+    LEFT JOIN c.client cl
+    JOIN c.user u
+    WHERE c.tool.idTool = :toolId ORDER BY c.moveDate DESC
+        """)
     List<CardexDto> findCardexByToolId(@Param("toolId") Long toolId);
 
     @Query("""

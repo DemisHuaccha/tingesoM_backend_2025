@@ -7,6 +7,7 @@ import com.example.tingesoM.Service.Interface.Users.ClientService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.resource.ResourceUrlProvider;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +49,9 @@ public class ClientServiceImpl implements ClientService {
         return clientRepositorie.findAll();
     }
 
+    @Override
+    public List<Client> findDelayedClient(){return clientRepositorie.findClientsDelayed();}
+
 
     //Update
     @Override
@@ -64,8 +68,8 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void updateStatusCustomer(Long idCustomer){
-        Client client = clientRepositorie.findById(idCustomer).orElse(null);
+    public void updateStatusCustomer(Long idClient){
+        Client client = clientRepositorie.findById(idClient).orElse(null);
         if(client !=null){
             if(client.getStatus().equals(Boolean.TRUE)){
                 client.setStatus(Boolean.FALSE);

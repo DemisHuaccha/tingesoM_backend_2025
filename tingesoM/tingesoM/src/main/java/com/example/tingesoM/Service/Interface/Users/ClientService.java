@@ -10,6 +10,7 @@ public interface ClientService {
     Client findByName(String name);
     Client findById(Long id);
     List<Client> findAll();
+    List<Client> findDelayedClient();
     void updateCustomer(Client client, Long id);
     void deleteCustomer(Client client);
     void updateStatusCustomer(Long idCustomer);

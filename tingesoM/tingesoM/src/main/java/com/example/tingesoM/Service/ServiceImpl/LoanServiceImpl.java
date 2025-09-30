@@ -70,8 +70,9 @@ public class LoanServiceImpl implements LoanService {
         // change tool status to false
         tool.setStatus(false);
         toolRepo.save(tool);
+        loanRepo.save(loan);
 
-        return loanRepo.save(loan);
+        return loan;
     }
 
     @Override

@@ -65,10 +65,6 @@ public class ToolServiceImpl implements ToolService {
 
     //Read
     @Override
-    public Tool findByName(String name){
-        return toolRepositorie.findByName(name).orElse(null);
-    }
-    @Override
     public Tool findById(Long id){
         return toolRepositorie.findById(id).orElse(null);
     }

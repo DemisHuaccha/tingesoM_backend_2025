@@ -5,7 +5,6 @@ package com.example.tingesoM.Controller;
 import com.example.tingesoM.Dtos.CardexDto;
 import com.example.tingesoM.Dtos.DtoTime;
 import com.example.tingesoM.Entities.Cardex;
-import com.example.tingesoM.Entities.Tool;
 import com.example.tingesoM.Service.ServiceImpl.CardexServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +19,6 @@ public class CardexController {
 
     @Autowired
     private CardexServiceImpl cardexService;
-
-    @GetMapping("/getAll")
-    public ResponseEntity<List<Cardex>> getAllCardexs() {
-        List<Cardex> cardexs = cardexService.findAll();
-        return ResponseEntity.ok(cardexs);
-    }
 
     @PostMapping("/getForTime")
     public ResponseEntity<List<CardexDto>> getForTime(@RequestBody DtoTime times){

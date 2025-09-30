@@ -25,6 +25,9 @@ public class UserServiceImpl implements UserService {
         user.setDeleteStatus(false);
         user.setEmail(userInf.getEmail());
         user.setRole(userInf.getRole());
+        user.setUser_firstname(userInf.getFirstName());
+        user.setUser_lastname(userInf.getLastName());
+        user.setPhone(userInf.getPhone());
         userRepositorie.save(user);
     }
 

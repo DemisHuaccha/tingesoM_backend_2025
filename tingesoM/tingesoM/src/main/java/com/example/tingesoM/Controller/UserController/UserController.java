@@ -1,7 +1,6 @@
 package com.example.tingesoM.Controller.UserController;
 
 import com.example.tingesoM.Dtos.CreateUserDto;
-import com.example.tingesoM.Entities.Tool;
 import com.example.tingesoM.Entities.User;
 import com.example.tingesoM.Service.ServiceImpl.Users.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;

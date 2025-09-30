@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface ToolService {
     Tool save(CreateToolDto tool);
-    Tool findByName(String name);
     Tool findById(Long id);
     List<Tool> findAll();
     List<Tool> findAllAvalible();

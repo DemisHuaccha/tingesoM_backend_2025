@@ -53,7 +53,7 @@ public class ClientController {
 
     @GetMapping("/getDelayedClients")
     public ResponseEntity<List<Client>> getDelayedClients(){
-        return ResponseEntity.ok(clientServiceImpl.findAll());
+        return ResponseEntity.ok(clientServiceImpl.findDelayedClient());
     }
 
 }

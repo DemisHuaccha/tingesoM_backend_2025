@@ -14,4 +14,8 @@ public interface ClientRepositorie extends JpaRepository<Client,Long> {
 
     Optional<Client> findByRut(String rut);
 
+
+    @Query("SELECT DISTINCT l.client FROM Loan l WHERE l.loanStatus = true AND l.returnDate < CURRENT_DATE")
+    List<Client> findClientsDelayed();
+
 }
