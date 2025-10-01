@@ -103,6 +103,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>tingeso-m</finalName>
 	</build>
 
 </project>

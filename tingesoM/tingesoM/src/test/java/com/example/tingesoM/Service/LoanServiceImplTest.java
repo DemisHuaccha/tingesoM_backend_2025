@@ -8,9 +8,12 @@ import com.example.tingesoM.Repositorie.LoanRepositorie;
 import com.example.tingesoM.Repositorie.ToolRepositorie;
 import com.example.tingesoM.Repositorie.UserRepositorie.ClientRepositorie;
 import com.example.tingesoM.Service.ServiceImpl.LoanServiceImpl;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
@@ -21,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DataJpaTest
 class LoanServiceImplTest {
 
     @Autowired

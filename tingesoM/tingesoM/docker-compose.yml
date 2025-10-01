@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  backend:
+    container_name: tingeso-m
+    image: demishuaccha/tingeso-m:latest
+    ports:
+      - "8090:8090"
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    deploy:
+      restart_policy:
+        condition: on-failure

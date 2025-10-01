@@ -5,9 +5,12 @@ import com.example.tingesoM.Entities.Tool;
 import com.example.tingesoM.Repositorie.ToolRepositorie;
 import com.example.tingesoM.Service.ServiceImpl.ToolServiceImpl;
 import com.example.tingesoM.Service.ServiceImpl.Users.UserServiceImpl;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -17,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DataJpaTest
 class ToolServiceImplTest {
 
     @Autowired
