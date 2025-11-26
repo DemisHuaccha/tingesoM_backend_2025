@@ -1,0 +1,60 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven-3.9'   // nombre que configuraste en Global Tool Configuration
+    }
+
+    environment {
+        REGISTRY = "demishuaccha/tingeso-m"
+        IMAGE_TAG = "latest"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/usuario/tu-repo.git',
+                    credentialsId: 'github-creds'
+            }
+        }
+
+        stage('Build with Maven') {
+            steps {
+                sh "mvn clean package -DskipTests"
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t ${REGISTRY}:${IMAGE_TAG} ."
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',
+                                                 usernameVariable: 'DOCKER_USER',
+                                                 passwordVariable: 'DOCKER_PASS')]) {
+                    sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh "docker push ${REGISTRY}:${IMAGE_TAG}"
+            }
+        }
+
+        stage('Deploy with Docker Compose') {
+            steps {
+                sh """
+                    docker compose stop
+                    docker compose rm -f
+                    docker compose up -d
+                """
+            }
+        }
+    }
+}
