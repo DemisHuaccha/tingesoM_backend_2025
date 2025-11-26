@@ -21,7 +21,9 @@ pipeline {
 
         stage('Build with Maven') {
             steps {
+                dir('tingesoM/tingesoM') {
                 sh "mvn clean package -DskipTests"
+                }
             }
         }
 
