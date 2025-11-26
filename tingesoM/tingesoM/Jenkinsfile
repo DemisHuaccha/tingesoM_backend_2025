@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven-3.9'   // nombre que configuraste en Global Tool Configuration
+        maven 'Maven-3.9'   // nombre configurado en Global Tool Configuration
     }
 
     environment {
@@ -11,25 +11,19 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main',
-                    url: 'https://github.com/DemisHuaccha/tingesoM_backend_2025.git',
-                    credentialsId: 'github-creds'
-            }
-        }
-
         stage('Build with Maven') {
             steps {
                 dir('tingesoM/tingesoM') {
-                sh "mvn clean package -DskipTests"
+                    sh "mvn clean package -DskipTests"
                 }
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${REGISTRY}:${IMAGE_TAG} ."
+                dir('tingesoM/tingesoM') {
+                    sh "docker build -t ${REGISTRY}:${IMAGE_TAG} ."
+                }
             }
         }
 
@@ -51,12 +45,15 @@ pipeline {
 
         stage('Deploy with Docker Compose') {
             steps {
-                sh """
-                    docker compose stop
-                    docker compose rm -f
-                    docker compose up -d
-                """
+                dir('tingesoM/tingesoM') {
+                    sh """
+                        docker compose stop
+                        docker compose rm -f
+                        docker compose up -d
+                    """
+                }
             }
         }
     }
 }
+
