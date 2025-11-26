@@ -14,7 +14,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/usuario/tu-repo.git',
+                    url: 'https://github.com/DemisHuaccha/tingesoM_backend_2025.git',
                     credentialsId: 'github-creds'
             }
         }
