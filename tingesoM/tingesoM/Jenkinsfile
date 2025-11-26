@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven-3.9'   // nombre configurado en Global Tool Configuration
+        maven 'Maven-3.9'
     }
 
     environment {
@@ -14,7 +14,14 @@ pipeline {
         stage('Build with Maven') {
             steps {
                 dir('tingesoM/tingesoM') {
-                    sh "mvn clean package -DskipTests"
+                    script {
+                        def cmd = "mvn clean package -DskipTests"
+                        if (isUnix()) {
+                            sh cmd
+                        } else {
+                            bat cmd
+                        }
+                    }
                 }
             }
         }
@@ -22,7 +29,14 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 dir('tingesoM/tingesoM') {
-                    sh "docker build -t ${REGISTRY}:${IMAGE_TAG} ."
+                    script {
+                        def cmd = "docker build -t ${REGISTRY}:${IMAGE_TAG} ."
+                        if (isUnix()) {
+                            sh cmd
+                        } else {
+                            bat cmd
+                        }
+                    }
                 }
             }
         }
@@ -32,25 +46,46 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',
                                                  usernameVariable: 'DOCKER_USER',
                                                  passwordVariable: 'DOCKER_PASS')]) {
-                    sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                    script {
+                        def cmd = "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
+                        if (isUnix()) {
+                            sh cmd
+                        } else {
+                            bat cmd
+                        }
+                    }
                 }
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                sh "docker push ${REGISTRY}:${IMAGE_TAG}"
+                script {
+                    def cmd = "docker push ${REGISTRY}:${IMAGE_TAG}"
+                    if (isUnix()) {
+                        sh cmd
+                    } else {
+                        bat cmd
+                    }
+                }
             }
         }
 
         stage('Deploy with Docker Compose') {
             steps {
                 dir('tingesoM/tingesoM') {
-                    sh """
-                        docker compose stop
-                        docker compose rm -f
-                        docker compose up -d
-                    """
+                    script {
+                        def cmd = """
+                            docker compose stop
+                            docker compose rm -f
+                            docker compose up -d
+                        """
+                        if (isUnix()) {
+                            sh cmd
+                        } else {
+                            bat cmd
+                        }
+                    }
                 }
             }
         }
