@@ -14,5 +14,7 @@ public interface ClientService {
     void updateCustomer(Client client, Long id);
     void deleteCustomer(Client client);
     void updateStatusCustomer(Long idCustomer);
+    void restrictClientsWithDelayedLoans();
+    List<String> searchRuts(String partialRut);
 
 }

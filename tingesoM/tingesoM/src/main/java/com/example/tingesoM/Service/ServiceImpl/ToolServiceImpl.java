@@ -1,19 +1,20 @@
 package com.example.tingesoM.Service.ServiceImpl;
 
-import com.example.tingesoM.Dtos.CreateToolDto;
-import com.example.tingesoM.Dtos.InitialCondition;
-import com.example.tingesoM.Dtos.ToolRankingDto;
-import com.example.tingesoM.Dtos.ToolStatusDto;
+import com.example.tingesoM.Dtos.*;
 import com.example.tingesoM.Entities.Tool;
+import com.example.tingesoM.Entities.User;
 import com.example.tingesoM.Repositorie.LoanRepositorie;
 import com.example.tingesoM.Repositorie.ToolRepositorie;
+import com.example.tingesoM.Repositorie.UserRepositorie.UserRepositorie;
 import com.example.tingesoM.Service.Interface.ToolService;
+import com.example.tingesoM.Service.ServiceImpl.Users.ClientServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,11 +26,23 @@ public class ToolServiceImpl implements ToolService {
     LoanRepositorie loanRepositorie;
 
     @Autowired
+    UserRepositorie userRepositorie;
+
+    @Autowired
     CardexServiceImpl cardexService;
+    @Autowired
+    ClientServiceImpl clientService;
 
     //Create
     @Override
     public Tool save(CreateToolDto toolT) {
+
+        //Verificacion de existencia de user
+        Optional<User> resultado = userRepositorie.findByEmail(toolT.getEmail());
+        if(!resultado.isPresent()){
+            throw new IllegalArgumentException("User with email " + toolT.getEmail() + " not found");
+        }
+
         for(int i=1; i<toolT.getQuantity();i++) {
             Tool tool = new Tool();
             tool.setStatus(Boolean.TRUE);
@@ -43,6 +56,7 @@ public class ToolServiceImpl implements ToolService {
             tool.setPenaltyForDelay(toolT.getPenaltyForDelay());
             tool.setReplacementValue(toolT.getReplacementValue());
             tool.setDescription(toolT.getDescription());
+            tool.setDamageValue(toolT.getDamageValue());
             toolRepositorie.save(tool);
         }
         /*--------------------------------*/
@@ -59,6 +73,7 @@ public class ToolServiceImpl implements ToolService {
         tool.setPenaltyForDelay(toolT.getPenaltyForDelay());
         tool.setReplacementValue(toolT.getReplacementValue());
         tool.setDescription(toolT.getDescription());
+        tool.setDamageValue(toolT.getDamageValue());
         toolRepositorie.save(tool);
         return tool;
     }
@@ -70,21 +85,30 @@ public class ToolServiceImpl implements ToolService {
     }
     @Override
     public List<Tool> findAll() {
+        clientService.restrictClientsWithDelayedLoans();
         return toolRepositorie.findAll();
     }
 
+    @Override
     public List<Tool> findAllAvalible() {
         return toolRepositorie.findAll().stream().filter(t -> t.getStatus().equals(Boolean.TRUE)).collect(Collectors.toList());
     }
 
+    @Override
     public List<Tool> findAllNotDelete() {
         return toolRepositorie.findAll().stream().filter(t -> t.getDeleteStatus().equals(Boolean.FALSE)).collect(Collectors.toList());
     }
 
+    @Override
     public List<String> getConditions(){
         return Arrays.stream(InitialCondition.values())
                 .map(Enum::name)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GroupToolsDto> groupTools(){
+        return toolRepositorie.agroupByNameCategoryAndLoanFee();
     }
 
     //Update

@@ -1,5 +1,6 @@
 package com.example.tingesoM.Controller;
 
+import com.example.tingesoM.Dtos.GroupToolsDto;
 import com.example.tingesoM.Dtos.CreateToolDto;
 import com.example.tingesoM.Dtos.ToolRankingDto;
 import com.example.tingesoM.Dtos.ToolStatusDto;
@@ -27,6 +28,12 @@ public class ToolController {
         Tool toolS=toolService.save(tool);
         cardexServiceImpl.saveCardexTool(tool,toolS);
         return ResponseEntity.ok(toolS);
+    }
+
+    @GetMapping("/getGroup")
+    public ResponseEntity<List<GroupToolsDto>> getGroupTools() {
+        List<GroupToolsDto> tools = toolService.groupTools();
+        return ResponseEntity.ok(tools);
     }
 
     @GetMapping("/getAll")

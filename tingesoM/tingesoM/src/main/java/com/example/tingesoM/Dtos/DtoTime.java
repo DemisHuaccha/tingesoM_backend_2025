@@ -9,4 +9,5 @@ import java.time.LocalDate;
 public class DtoTime {
     private LocalDate start;
     private LocalDate end;
+    private Long idTool;
 }

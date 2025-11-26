@@ -56,4 +56,10 @@ public class ClientController {
         return ResponseEntity.ok(clientServiceImpl.findDelayedClient());
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<String>> searchRuts(@RequestParam String rut) {
+        List<String> ruts = clientServiceImpl.searchRuts(rut);
+        return ResponseEntity.ok(ruts);
+    }
+
 }

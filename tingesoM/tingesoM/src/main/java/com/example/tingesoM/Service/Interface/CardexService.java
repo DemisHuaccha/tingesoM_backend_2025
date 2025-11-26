@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface CardexService {
 
-    List<CardexDto> findForRangeDate(LocalDate start, LocalDate end);
+    List<CardexDto> findForRangeDate(LocalDate start, LocalDate end, Long toolId);
     List<CardexDto> findCardexTool(Long toolId);
     List<CardexDto> findAllDto();
 
@@ -27,4 +27,8 @@ public interface CardexService {
     void saveCardexDeleteTool(ToolStatusDto toolDto, Tool tool);
 
     void saveCardexReturnLoan(ReturnLoanDto loanDto);
+
+    void saveCardexReturnLoanDamage(ReturnLoanDto loanDto);
+
+    void saveCardexReturnLoanDelete(ReturnLoanDto loanDto);
 }

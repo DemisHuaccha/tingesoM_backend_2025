@@ -197,8 +197,9 @@ class CardexServiceImplTest {
     void findForRangeDate() {
         LocalDate start = LocalDate.now().minusDays(10);
         LocalDate end = LocalDate.now().plusDays(10);
+        Long toolId = null;
 
-        List<CardexDto> dtos = cardexService.findForRangeDate(start, end);
+        List<CardexDto> dtos = cardexService.findForRangeDate(start, end, toolId);
         assertFalse(dtos.isEmpty());
     }
 

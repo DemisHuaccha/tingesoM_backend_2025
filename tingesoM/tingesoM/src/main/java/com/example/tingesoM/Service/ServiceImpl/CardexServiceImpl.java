@@ -54,6 +54,7 @@ public class CardexServiceImpl implements CardexService {
         //Creation of cardex
         cardex.setTypeMove("Create Loan");
         cardex.setMoveDate(LocalDate.now());
+        cardex.setClient(loan.getClient());
         cardex.setLoan(loan);
         cardex.setAmount(null);
         cardex.setDescription("User with email "+email+" register a loan where rut client is: "+ loan.getClient().getRut());
@@ -61,6 +62,39 @@ public class CardexServiceImpl implements CardexService {
 
         cardexRepositorie.save(cardex);
     }
+
+    /*Create cardex for a loan list*/
+
+    //Register loan
+    public void saveCardexLoanL(List<Loan> listLoan, String email) {
+        Cardex cardex = new Cardex();
+
+        //Verificacion de existencia de user
+        Optional<User> resultado = userRepositorie.findByEmail(email);
+        if(resultado.isPresent()){
+            cardex.setUser(resultado.get());
+        }
+        else {
+            throw new IllegalArgumentException("User with Email " + email + " not found");
+        }
+
+        //Creation of cardex
+        for(int i=0; i<listLoan.size();i++) {
+            Loan loan = listLoan.get(i);
+            Tool tool = loan.getTool();
+
+            cardex.setTool(tool);
+            cardex.setTypeMove("Create Loan");
+            cardex.setMoveDate(LocalDate.now());
+            cardex.setLoan(loan);
+            cardex.setAmount(null);
+            cardex.setDescription("User with email " + email + " register a loan where rut client is: " + loan.getClient().getRut());
+            cardex.setQuantity(1);
+
+            cardexRepositorie.save(cardex);
+        }
+    }
+
 
     /*Create cardex for tool*/
 
@@ -206,6 +240,10 @@ public class CardexServiceImpl implements CardexService {
     @Override
     public void saveCardexReturnLoan(ReturnLoanDto loanDto) {
         Cardex cardex = new Cardex();
+        Optional<Loan> loan = loanRepositorie.findById(loanDto.getLoanId());
+        if(loan.isEmpty()){
+            throw new IllegalArgumentException("Loan with id: " + loanDto.getLoanId() + " not found");
+        }
         Optional<User> resultado = userRepositorie.findByEmail(loanDto.getEmail());
         if(resultado.isPresent()){
             cardex.setUser(resultado.get());
@@ -213,12 +251,66 @@ public class CardexServiceImpl implements CardexService {
         else {
             throw new IllegalArgumentException("User with email " + loanDto.getEmail() + " not found");
         }
-        cardex.setClient(null);
+        cardex.setClient(loan.get().getClient());
         cardex.setLoan(loanRepositorie.findById(loanDto.getLoanId()).orElse(null));
-        cardex.setTool(null);
+        cardex.setTool(loan.get().getTool());
         cardex.setTypeMove("Loan Finished");
         cardex.setAmount(null);
         cardex.setDescription("User with email "+loanDto.getEmail() +" return loan with id: "+ loanDto.getLoanId());
+        cardex.setMoveDate(LocalDate.now());
+        cardex.setQuantity(1);
+
+        cardexRepositorie.save(cardex);
+    }
+
+    @Override
+    public void saveCardexReturnLoanDamage(ReturnLoanDto loanDto) {
+        Cardex cardex = new Cardex();
+        Optional<User> resultado = userRepositorie.findByEmail(loanDto.getEmail());
+        if(resultado.isPresent()){
+            cardex.setUser(resultado.get());
+        }
+        else {
+            throw new IllegalArgumentException("User with email " + loanDto.getEmail() + " not found");
+        }
+        Optional<Loan> loan = loanRepositorie.findById(loanDto.getLoanId());
+        if(loan.isEmpty()){
+            throw new IllegalArgumentException("Loan with id: " + loanDto.getLoanId() + " not found");
+        }
+
+        cardex.setClient(loan.get().getClient());
+        cardex.setLoan(loanRepositorie.findById(loanDto.getLoanId()).orElse(null));
+        cardex.setTool(loan.get().getTool());
+        cardex.setTypeMove("Loan Finished");
+        cardex.setAmount(null);
+        cardex.setDescription("User with email "+loanDto.getEmail() +" return loan with id: "+ loanDto.getLoanId() + ", And tool damaged");
+        cardex.setMoveDate(LocalDate.now());
+        cardex.setQuantity(1);
+
+        cardexRepositorie.save(cardex);
+    }
+
+
+    @Override
+    public void saveCardexReturnLoanDelete(ReturnLoanDto loanDto) {
+        Cardex cardex = new Cardex();
+        Optional<User> resultado = userRepositorie.findByEmail(loanDto.getEmail());
+        if(resultado.isPresent()){
+            cardex.setUser(resultado.get());
+        }
+        else {
+            throw new IllegalArgumentException("User with email " + loanDto.getEmail() + " not found");
+        }
+        Optional<Loan> loan = loanRepositorie.findById(loanDto.getLoanId());
+        if(loan.isEmpty()){
+            throw new IllegalArgumentException("Loan with id: " + loanDto.getLoanId() + " not found");
+        }
+        cardex.setClient(loan.get().getClient());
+        cardex.setLoan(loanRepositorie.findById(loanDto.getLoanId()).orElse(null));
+        cardex.setTool(loan.get().getTool());
+        cardex.setTypeMove("Loan Finished");
+        cardex.setAmount(null);
+        cardex.setDescription("User with email "+loanDto.getEmail() +" return loan with id: "+ loanDto.getLoanId()+", And the tool needs to be replaced");
         cardex.setMoveDate(LocalDate.now());
         cardex.setQuantity(1);
 
@@ -235,18 +327,27 @@ public class CardexServiceImpl implements CardexService {
 
     /*Find for range date*/
     @Override
-    public List<CardexDto> findForRangeDate(LocalDate start, LocalDate end) {
-        if(start==null && end==null){
-            return cardexRepositorie.findAllCardex();
+    public List<CardexDto> findForRangeDate(LocalDate start, LocalDate end, Long toolId) {
+        if (toolId==null) {
+            if (start == null && end == null) {
+                return cardexRepositorie.findAllCardex();
+            } else if (end == null) {
+                return cardexRepositorie.findMovementsFromDate(start);
+            } else if (start == null) {
+                return cardexRepositorie.findMovementsUntilDate(end);
+            }
+            return cardexRepositorie.findCardexDateRange(start, end);
         }
-        else if(end == null){
-            return cardexRepositorie.findMovementsFromDate(start);
+        else{
+            if (start == null && end == null) {
+                return cardexRepositorie.findCardexByToolId(toolId);
+            } else if (end == null) {
+                return cardexRepositorie.findMovementsFromDateId(start, toolId);
+            } else if (start == null) {
+                return cardexRepositorie.findMovementsUntilDateId(end, toolId);
+            }
+            return cardexRepositorie.findCardexDateRangeId(start, end, toolId);
         }
-        else if(start == null){
-            return cardexRepositorie.findMovementsUntilDate(end);
-        }
-        return cardexRepositorie.findCardexDateRange(start, end);
-
     }
 
     /*Find cardex tool*/

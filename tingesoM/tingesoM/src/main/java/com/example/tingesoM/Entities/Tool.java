@@ -41,6 +41,10 @@ public class Tool {
     @Column(name = "replacementValue")
     private Integer replacementValue;
 
+    //Precio por dano
+    @Column(name = "damageValue")
+    private Integer damageValue;
+
     //Herramienta libre: True (Libre) / False (En prestamo)
     @Column(name = "status")
     private Boolean status;

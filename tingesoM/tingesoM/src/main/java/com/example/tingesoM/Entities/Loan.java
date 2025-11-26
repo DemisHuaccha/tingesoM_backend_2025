@@ -45,4 +45,7 @@ public class Loan {
 
     @Column(name = "penalty_Total")
     private Integer penaltyTotal;
+
+    @Column(name = "priceToPay")
+    private Integer priceToPay;
 }

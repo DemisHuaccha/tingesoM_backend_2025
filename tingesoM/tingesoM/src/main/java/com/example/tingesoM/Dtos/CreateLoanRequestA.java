@@ -1,24 +1,25 @@
 package com.example.tingesoM.Dtos;
 
-import jakarta.persistence.Column;
 import lombok.Data;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Data
-public class CreateToolDto {
+public class CreateLoanRequestA {
+    private LocalDate deliveryDate;
+    private LocalDate returnDate;
+    private String clientRut;
     private String name;
-    private String description;
     private String category;
     private InitialCondition initialCondition;
     private Integer loanFee;
     private Integer penaltyForDelay;
     private Integer replacementValue;
     private Integer damageValue;
-    private Boolean status;
-    private Boolean underRepair;
-    private Boolean deleteStatus;
+    private List<Long> ToolId;
 
-    /*--------------*/
-    private Integer quantity;
+    /*---------------*/
+
     private String email;
-    private Long idTool;
 }

@@ -6,6 +6,7 @@ import com.example.tingesoM.Entities.Client;
 import com.example.tingesoM.Entities.Loan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,14 +16,14 @@ public interface LoanRepositorie extends JpaRepository<Loan,Long> {
 
     List<Loan> findByClientAndLoanStatusTrue(Client client);
 
-    List<Loan> findByClientAndLoanStatusFalseAndPenaltyTrue(Client client);
+    List<Loan> findByClientAndLoanStatusTrueAndPenaltyTrue(Client client);
 
-    @Query("SELECT new com.example.tingesoM.Dtos.LoanResponseDto(" +
-            " l.loanId, l.deliveryDate, l.returnDate, " +
-            " l.loanStatus, l.penalty, l.penaltyTotal, " +
-            " l.client.rut, l.tool.idTool" +
-            ") " +
-            "FROM Loan l")
+
+    @Query("""
+            SELECT new com.example.tingesoM.Dtos.LoanResponseDto(
+            l.loanId, l.deliveryDate, l.returnDate, l.loanStatus, l.penalty, l.penaltyTotal, l.client.rut, l.tool.idTool, l.priceToPay)
+            FROM Loan l
+            """)
     List<LoanResponseDto> findAllWithClientAndToolIds();
 
     //Return loan actives
@@ -45,5 +46,16 @@ public interface LoanRepositorie extends JpaRepository<Loan,Long> {
             "ORDER BY COUNT(l) DESC")
     List<ToolRankingDto> findMostLoanedToolsWithDetails();
 
+
+    @Query("SELECT COUNT(l) >= 1 FROM Loan l " +
+            "WHERE l.client.idCustomer = :clientId " +
+            "AND l.loanStatus = true " +
+            "AND l.tool.name = :toolName " +
+            "AND l.tool.category = :toolCategory " +
+            "AND l.tool.loanFee = :toolLoanFee")
+    boolean clientHasNoMatchingLoan(@Param("clientId") Long clientId,
+                                    @Param("toolName") String toolName,
+                                    @Param("toolCategory") String toolCategory,
+                                    @Param("toolLoanFee") Integer toolLoanFee);
 
 }

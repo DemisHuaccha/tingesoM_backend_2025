@@ -1,5 +1,6 @@
 package com.example.tingesoM.Service.Interface;
 
+import com.example.tingesoM.Dtos.GroupToolsDto;
 import com.example.tingesoM.Dtos.CreateToolDto;
 import com.example.tingesoM.Dtos.ToolRankingDto;
 import com.example.tingesoM.Dtos.ToolStatusDto;
@@ -18,4 +19,7 @@ public interface ToolService {
     void underRepairTool(ToolStatusDto toolDto);
     List<ToolRankingDto> findAllToolLoanRanking();
     List<Tool> filterTools(ToolRankingDto toolDto);
+    List<GroupToolsDto> groupTools();
+    List<String> getConditions();
+    List<Tool> findAllNotDelete();
 }

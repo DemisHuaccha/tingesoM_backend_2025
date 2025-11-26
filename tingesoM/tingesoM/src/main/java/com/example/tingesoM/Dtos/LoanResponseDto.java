@@ -15,9 +15,10 @@ public class LoanResponseDto {
     private Integer penaltyTotal;
     private String clientRut;
     private Long toolId;
+    private Integer priceToPay;
 
     public LoanResponseDto(Long loanId, LocalDate deliveryDate, LocalDate returnDate, Boolean loanStatus,
-                           Boolean penalty, Integer penaltyTotal, String clientRut, Long toolId) {
+                           Boolean penalty, Integer penaltyTotal, String clientRut, Long toolId, Integer priceToPay) {
         this.loanId = loanId;
         this.deliveryDate = deliveryDate;
         this.returnDate = returnDate;
@@ -26,5 +27,6 @@ public class LoanResponseDto {
         this.penaltyTotal = penaltyTotal;
         this.clientRut = clientRut;
         this.toolId = toolId;
+        this.priceToPay = priceToPay;
     }
 }

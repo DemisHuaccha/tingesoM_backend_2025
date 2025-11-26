@@ -1,9 +1,11 @@
 package com.example.tingesoM.Controller;
 
 import com.example.tingesoM.Dtos.CreateLoanRequest;
+import com.example.tingesoM.Dtos.CreateLoanRequestA;
 import com.example.tingesoM.Dtos.LoanResponseDto;
 import com.example.tingesoM.Dtos.ReturnLoanDto;
 import com.example.tingesoM.Entities.Loan;
+import com.example.tingesoM.Entities.Tool;
 import com.example.tingesoM.Service.ServiceImpl.CardexServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +42,17 @@ public class LoanController {
         return ResponseEntity.ok(loanSave);
     }
 
+
+    @PostMapping("/createLoanList")
+    public ResponseEntity<?> createLoanL(@RequestBody CreateLoanRequestA loan){
+
+
+        List<Loan> listLoans= loanService.createLoanL(loan);
+        cardexServiceImpl.saveCardexLoanL(listLoans, loan.getEmail());
+        return ResponseEntity.ok("Loan made successfully");
+    }
+
+
     /*
     RF2.3, RF2.4 y RF2.5: registra devolución de herramienta,calcula multas por atraso y libera stock.
      */
@@ -48,6 +61,22 @@ public class LoanController {
         LocalDate date = LocalDate.now();
         Loan loan = loanService.returnLoan(loanDto.getLoanId(), date);
         cardexServiceImpl.saveCardexReturnLoan(loanDto);
+        return ResponseEntity.ok(loan);
+    }
+
+    @PutMapping("/returnDamegeTool")
+    public ResponseEntity<Loan> returnLoanDamage(@RequestBody ReturnLoanDto loanDto) {
+        LocalDate date = LocalDate.now();
+        Loan loan = loanService.returnLoanDamageTool(loanDto.getLoanId(), date);
+        cardexServiceImpl.saveCardexReturnLoanDamage(loanDto);
+        return ResponseEntity.ok(loan);
+    }
+
+    @PutMapping("/returnDeleteTool")
+    public ResponseEntity<Loan> returnLoanDelete(@RequestBody ReturnLoanDto loanDto) {
+        LocalDate date = LocalDate.now();
+        Loan loan = loanService.returnLoanDeleteTool(loanDto.getLoanId(), date);
+        cardexServiceImpl.saveCardexReturnLoanDelete(loanDto);
         return ResponseEntity.ok(loan);
     }
 

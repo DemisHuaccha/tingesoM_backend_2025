@@ -1,5 +1,6 @@
 package com.example.tingesoM.Service.Interface;
 
+import com.example.tingesoM.Dtos.CreateLoanRequestA;
 import com.example.tingesoM.Dtos.LoanResponseDto;
 import com.example.tingesoM.Dtos.ToolRankingDto;
 import com.example.tingesoM.Entities.Client;
@@ -16,4 +17,12 @@ public interface LoanService {
     List<LoanResponseDto> findAll();
 
     List<Client> findClientDelayed();
+
+    Loan returnLoanDamageTool(Long loanId, LocalDate actualReturnDate);
+
+    Loan returnLoanDeleteTool(Long loanId, LocalDate actualReturnDate);
+
+    List<Loan> createLoanL(CreateLoanRequestA loanRequestA);
+
+    Boolean isToolAvailableForClient(Long clientId, String toolName, String toolCategory, Integer loanFee);
 }

@@ -22,13 +22,13 @@ public class CardexController {
 
     @PostMapping("/getForTime")
     public ResponseEntity<List<CardexDto>> getForTime(@RequestBody DtoTime times){
-        List<CardexDto> cardexList= cardexService.findForRangeDate(times.getStart(),times.getEnd());
+        List<CardexDto> cardexList= cardexService.findForRangeDate(times.getStart(),times.getEnd(), times.getIdTool());
         return ResponseEntity.ok(cardexList);
     }
 
-    @GetMapping("/getCardexTool/{toolId}")
-    public ResponseEntity<List<CardexDto>> getCardexTool(@PathVariable Long toolId){
-        List<CardexDto> cardexList= cardexService.findCardexTool(toolId);
+    @PostMapping("/getCardexTool")
+    public ResponseEntity<List<CardexDto>> getCardexTool(@RequestBody CardexDto cardexDto){
+        List<CardexDto> cardexList= cardexService.findCardexTool(cardexDto.getToolId());
         return ResponseEntity.ok(cardexList);
     }
 
