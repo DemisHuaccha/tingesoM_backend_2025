@@ -1,26 +1,58 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven-3.9'
+    }
+
     environment {
-        IMAGE_NAME = "demishuaccha/frontend"
-        IMAGE_TAG  = "latest"
+        REGISTRY = "demishuaccha/tingeso-m"
+        IMAGE_TAG = "latest"
     }
 
     stages {
-
-        stage('Checkout') {
+        stage('Build with Maven') {
             steps {
-                checkout scm
+                dir('tingesoM/tingesoM') {
+                    script {
+                        def cmd = "mvn clean package -DskipTests"
+                        if (isUnix()) {
+                            sh cmd
+                        } else {
+                            bat cmd
+                        }
+                    }
+                }
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    dir('monolitic-front') {
-                        runCmd("""
-                            docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
-                        """)
+                dir('tingesoM/tingesoM') {
+                    script {
+                        def cmd = "docker build -t ${REGISTRY}:${IMAGE_TAG} ."
+                        if (isUnix()) {
+                            sh cmd
+                        } else {
+                            bat cmd
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',
+                                                 usernameVariable: 'DOCKER_USER',
+                                                 passwordVariable: 'DOCKER_PASS')]) {
+                    script {
+                        def cmd = "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
+                        if (isUnix()) {
+                            sh cmd
+                        } else {
+                            bat cmd
+                        }
                     }
                 }
             }
@@ -29,10 +61,11 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    dir('monolitic-front') {
-                        runCmd("""
-                            docker push ${IMAGE_NAME}:${IMAGE_TAG}
-                        """)
+                    def cmd = "docker push ${REGISTRY}:${IMAGE_TAG}"
+                    if (isUnix()) {
+                        sh cmd
+                    } else {
+                        bat cmd
                     }
                 }
             }
@@ -40,31 +73,21 @@ pipeline {
 
         stage('Deploy with Docker Compose') {
             steps {
-                script {
-                    dir('monolitic-front') {
-                        runCmd("""
-                            docker compose down
-                            docker compose up -d --build
-                        """)
+                dir('tingesoM/tingesoM') {
+                    script {
+                        def cmd = """
+                            docker compose stop
+                            docker compose rm -f
+                            docker compose up -d
+                        """
+                        if (isUnix()) {
+                            sh cmd
+                        } else {
+                            bat cmd
+                        }
                     }
                 }
             }
         }
     }
-
-    post {
-        failure {
-            echo "Algo falló en el pipeline"
-        }
-    }
 }
-
-def runCmd(cmd) {
-    if (isUnix()) {
-        sh cmd
-    } else {
-        bat cmd
-    }
-}
-
-
