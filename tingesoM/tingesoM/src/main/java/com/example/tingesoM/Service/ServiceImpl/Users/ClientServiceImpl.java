@@ -69,7 +69,9 @@ public class ClientServiceImpl implements ClientService {
             oldcustomer.setFirstName(client.getFirstName());
             oldcustomer.setLastName(client.getLastName());
             oldcustomer.setRut(client.getRut());
-            clientRepositorie.save(client);
+            oldcustomer.setEmail(client.getEmail());
+            oldcustomer.setPhone(client.getPhone());
+            clientRepositorie.save(oldcustomer);
         }else {
             throw new EntityNotFoundException("Client with ID " + id + " not found");
         }

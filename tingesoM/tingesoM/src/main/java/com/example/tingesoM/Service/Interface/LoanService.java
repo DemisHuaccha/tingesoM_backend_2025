@@ -22,7 +22,9 @@ public interface LoanService {
 
     Loan returnLoanDeleteTool(Long loanId, LocalDate actualReturnDate);
 
+    /*
     List<Loan> createLoanL(CreateLoanRequestA loanRequestA);
+    */
 
     Boolean isToolAvailableForClient(Long clientId, String toolName, String toolCategory, Integer loanFee);
 }

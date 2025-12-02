@@ -90,6 +90,7 @@ public class LoanServiceImpl implements LoanService {
         return loan;
     }
 
+    /* Un used
     @Override
     public List<Loan> createLoanL(CreateLoanRequestA loanRequestA) {
 
@@ -158,7 +159,7 @@ public class LoanServiceImpl implements LoanService {
 
         return listLoan;
     }
-
+*/
 
 
     @Override
@@ -203,31 +204,32 @@ public class LoanServiceImpl implements LoanService {
             throw new IllegalStateException("Loan already returned");
         }
 
-        // RF2.3: actualizar estado y calcular multa
         loan.setLoanStatus(false);
 
-        long daysLate = ChronoUnit.DAYS.between(
-                loan.getReturnDate(), actualReturnDate);
-        if (daysLate > 0) {
-            int multa = (int) (daysLate * loan.getTool().getPenaltyForDelay());
-            multa = multa + loan.getTool().getDamageValue();
-            loan.setPenalty(true);
-            loan.setPenaltyTotal(multa);
-        } else {
-            loan.setPenalty(false);
-            loan.setPenaltyTotal(0);
-        }
+        long daysLate = ChronoUnit.DAYS.between(loan.getReturnDate(), actualReturnDate);
 
-        // liberar herramienta
+        // CORRECCIÓN: Calcular multa por atraso (si existe)
+        int delayPenalty = (daysLate > 0) ? (int) (daysLate * loan.getTool().getPenaltyForDelay()) : 0;
+
+        // CORRECCIÓN: Sumar SIEMPRE el valor del daño
+        int totalPenalty = delayPenalty + loan.getTool().getDamageValue();
+
+        // Siempre hay penalidad porque hubo daño
+        loan.setPenalty(true);
+        loan.setPenaltyTotal(totalPenalty);
+
+        // ... resto de lógica de liberar herramienta ...
         Tool tool = loan.getTool();
         tool.setStatus(true);
         tool.setUnderRepair(true);
         toolRepo.save(tool);
 
-        loan.setPriceToPay(loan.getPriceToPay() + loan.getTool().getDamageValue() );
-        loanRepo.save(loan);
+        // Asegúrate de que getPriceToPay() no sea null (como corregimos antes)
+        int currentPrice = loan.getPriceToPay() != null ? loan.getPriceToPay() : 0;
+        loan.setPriceToPay(currentPrice + loan.getTool().getDamageValue());
+
         loan.getClient().setStatus(Boolean.TRUE);
-        return loan;
+        return loanRepo.save(loan);
     }
 
     @Override
@@ -239,30 +241,30 @@ public class LoanServiceImpl implements LoanService {
             throw new IllegalStateException("Loan already returned");
         }
 
-        // RF2.3: actualizar estado y calcular multa
         loan.setLoanStatus(false);
 
-        long daysLate = ChronoUnit.DAYS.between(
-                loan.getReturnDate(), actualReturnDate);
-        if (daysLate > 0) {
-            int multa = (int) (daysLate * loan.getTool().getPenaltyForDelay());
-            multa = multa + loan.getTool().getReplacementValue();
-            loan.setPenalty(true);
-            loan.setPenaltyTotal(multa);
-        } else {
-            loan.setPenalty(false);
-            loan.setPenaltyTotal(0);
-        }
+        long daysLate = ChronoUnit.DAYS.between(loan.getReturnDate(), actualReturnDate);
 
-        // liberar herramienta
+        // CORRECCIÓN: Calcular multa por atraso (si existe)
+        int delayPenalty = (daysLate > 0) ? (int) (daysLate * loan.getTool().getPenaltyForDelay()) : 0;
+
+        // CORRECCIÓN: Sumar SIEMPRE el valor de reposición
+        int totalPenalty = delayPenalty + loan.getTool().getReplacementValue();
+
+        // Siempre hay penalidad porque se perdió/eliminó
+        loan.setPenalty(true);
+        loan.setPenaltyTotal(totalPenalty);
+
+        // ... resto de lógica de herramienta ...
         Tool tool = loan.getTool();
         tool.setStatus(false);
         tool.setUnderRepair(false);
-        tool.setDeleteStatus(false);
+        tool.setDeleteStatus(false); // OJO: Verifica si esto debe ser true o false según tu lógica
         toolRepo.save(tool);
 
-        loan.setPriceToPay(loan.getPriceToPay() + loan.getTool().getReplacementValue() );
-        loanRepo.save(loan);
+        int currentPrice = loan.getPriceToPay() != null ? loan.getPriceToPay() : 0;
+        loan.setPriceToPay(currentPrice + loan.getTool().getReplacementValue());
+
         loan.getClient().setStatus(Boolean.TRUE);
         return loanRepo.save(loan);
     }

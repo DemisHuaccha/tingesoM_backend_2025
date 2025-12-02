@@ -10,6 +10,21 @@ pipeline {
         IMAGE_TAG = "latest"
     }
 
+    stage('Unit Tests') {
+                steps {
+                    dir('tingesoM/tingesoM') {
+                        script {
+                            def cmd = "mvn clean test"
+                            if (isUnix()) {
+                                sh cmd
+                            } else {
+                                bat cmd
+                            }
+                        }
+                    }
+                }
+            }
+
     stages {
         stage('Build with Maven') {
             steps {

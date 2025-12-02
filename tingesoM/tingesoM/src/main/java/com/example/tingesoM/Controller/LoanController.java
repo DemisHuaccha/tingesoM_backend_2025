@@ -43,6 +43,7 @@ public class LoanController {
     }
 
 
+    /* Un-Used
     @PostMapping("/createLoanList")
     public ResponseEntity<?> createLoanL(@RequestBody CreateLoanRequestA loan){
 
@@ -51,6 +52,7 @@ public class LoanController {
         cardexServiceImpl.saveCardexLoanL(listLoans, loan.getEmail());
         return ResponseEntity.ok("Loan made successfully");
     }
+     */
 
 
     /*

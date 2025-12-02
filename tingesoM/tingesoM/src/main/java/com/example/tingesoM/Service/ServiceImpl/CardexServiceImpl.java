@@ -65,7 +65,9 @@ public class CardexServiceImpl implements CardexService {
 
     /*Create cardex for a loan list*/
 
+    //Unused
     //Register loan
+    /*
     public void saveCardexLoanL(List<Loan> listLoan, String email) {
         Cardex cardex = new Cardex();
 
@@ -94,7 +96,7 @@ public class CardexServiceImpl implements CardexService {
             cardexRepositorie.save(cardex);
         }
     }
-
+    */
 
     /*Create cardex for tool*/
 

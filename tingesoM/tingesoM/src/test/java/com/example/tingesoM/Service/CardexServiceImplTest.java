@@ -19,10 +19,12 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.Test;
+import java.util.ArrayList;
+
 @SpringBootTest
 @ActiveProfiles("test")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DataJpaTest
+@Transactional // Limpia la DB después de cada test automáticamente
 class CardexServiceImplTest {
 
     @Autowired
@@ -43,172 +45,271 @@ class CardexServiceImplTest {
     @Autowired
     private ClientRepositorie clientRepositorie;
 
-    private static String userEmail = "admin@example.com";
-    private static Long toolId;
-    private static Long loanId;
-    private static String clientRut = "12.345.678-9";
+    // --- MÉTODOS HELPER PARA CREAR DATOS RÁPIDAMENTE ---
 
-    @BeforeAll
-    static void setup(@Autowired UserRepositorie userRepo,
-                      @Autowired ToolRepositorie toolRepo,
-                      @Autowired ClientRepositorie clientRepo,
-                      @Autowired LoanRepositorie loanRepo) {
-
+    private User createUser(String email) {
         User user = new User();
-        user.setEmail(userEmail);
-        user.setUser_firstname("Admin");
+        user.setEmail(email);
+        user.setUser_firstname("TestUser");
         user.setRole("ADMIN");
-        userRepo.save(user);
+        user.setDeleteStatus(false);
+        return userRepositorie.save(user);
+    }
 
+    private Tool createTool(String name) {
         Tool tool = new Tool();
-        tool.setName("Taladro");
-        tool.setCategory("Electricas");
-        tool.setLoanFee(10000);
+        tool.setName(name);
+        tool.setCategory("General");
+        tool.setLoanFee(5000);
         tool.setUnderRepair(false);
-        Tool savedTool = toolRepo.save(tool);
-        toolId = savedTool.getIdTool();
+        return toolRepositorie.save(tool);
+    }
 
+    private Client createClient(String rut) {
         Client client = new Client();
-        client.setFirstName("Ana");
-        client.setLastName("Torres");
-        client.setRut(clientRut);
-        client.setEmail("ana@example.com");
-        client.setPhone("+56912345678");
+        client.setRut(rut);
+        client.setFirstName("Cliente");
+        client.setLastName("Test");
+        client.setEmail("cli@test.com");
         client.setStatus(true);
-        clientRepo.save(client);
+        return clientRepositorie.save(client);
+    }
 
+    private Loan createLoan(Client client, Tool tool) {
         Loan loan = new Loan();
         loan.setClient(client);
         loan.setTool(tool);
-        loan.setDeliveryDate(LocalDate.now().minusDays(5));
+        loan.setDeliveryDate(LocalDate.now());
         loan.setReturnDate(LocalDate.now().plusDays(5));
-        loanRepo.save(loan);
-        loanId = loan.getLoanId();
+        return loanRepositorie.save(loan);
     }
 
+    // --- TESTS ---
+
     @Test
-    @Order(1)
     void saveCardexLoan() {
-        Loan loan = loanRepositorie.findById(loanId).orElseThrow();
-        cardexService.saveCardexLoan(toolId, userEmail, loan);
+        String email = "loan@test.com";
+        createUser(email);
+        Tool tool = createTool("Martillo");
+        Client client = createClient("11.111.111-1");
+        Loan loan = createLoan(client, tool);
+
+        cardexService.saveCardexLoan(tool.getIdTool(), email, loan);
 
         List<Cardex> result = cardexRepositorie.findAll();
         assertTrue(result.stream().anyMatch(c -> "Create Loan".equals(c.getTypeMove())));
     }
 
+    /*
     @Test
-    @Order(2)
-    void saveCardexTool() {
-        CreateToolDto dto = new CreateToolDto();
-        dto.setEmail(userEmail);
-        dto.setQuantity(3);
+    void saveCardexLoanL() { // Test Faltante Agregado
+        String email = "list@test.com";
+        createUser(email);
+        Client client = createClient("22.222.222-2");
 
-        Tool tool = toolRepositorie.findById(toolId).orElseThrow();
+        List<Loan> loans = new ArrayList<>();
+        loans.add(createLoan(client, createTool("Tool A")));
+        loans.add(createLoan(client, createTool("Tool B")));
+
+        cardexService.saveCardexLoanL(loans, email);
+
+        List<Cardex> result = cardexRepositorie.findAll();
+        long count = result.stream().filter(c -> "Create Loan".equals(c.getTypeMove())).count();
+        assertEquals(2, count);
+    }
+     */
+
+    @Test
+    void saveCardexTool() {
+        String email = "tool@test.com";
+        createUser(email);
+        Tool tool = createTool("Sierra");
+
+        CreateToolDto dto = new CreateToolDto();
+        dto.setEmail(email);
+        dto.setQuantity(5);
+
         cardexService.saveCardexTool(dto, tool);
 
         assertTrue(cardexRepositorie.findAll().stream().anyMatch(c -> "Create Tool".equals(c.getTypeMove())));
     }
 
     @Test
-    @Order(3)
     void saveCardexClient() {
-        CreateClientDto dto = new CreateClientDto();
-        dto.setEmail(userEmail);
-        dto.setRut(clientRut);
+        String email = "client@test.com";
+        createUser(email);
+        Client client = createClient("33.333.333-3");
 
-        Client client = clientRepositorie.findByRut(clientRut).orElseThrow();
+        CreateClientDto dto = new CreateClientDto();
+        dto.setEmail(email);
+        dto.setRut(client.getRut());
+
         cardexService.saveCardexClient(dto, client);
 
         assertTrue(cardexRepositorie.findAll().stream().anyMatch(c -> "Create Client".equals(c.getTypeMove())));
     }
 
     @Test
-    @Order(4)
     void saveCardexUpdateTool() {
-        CreateToolDto dto = new CreateToolDto();
-        dto.setEmail(userEmail);
+        String email = "updtool@test.com";
+        createUser(email);
+        Tool tool = createTool("Lijadora");
 
-        Tool tool = toolRepositorie.findById(toolId).orElseThrow();
+        CreateToolDto dto = new CreateToolDto();
+        dto.setEmail(email);
+
         cardexService.saveCardexUpdateTool(dto, tool);
 
         assertTrue(cardexRepositorie.findAll().stream().anyMatch(c -> "Update Tool".equals(c.getTypeMove())));
     }
 
     @Test
-    @Order(5)
     void saveCardexUpdateStatusTool() {
-        ToolStatusDto dto = new ToolStatusDto();
-        dto.setEmail(userEmail);
-        dto.setIdTool(toolId);
+        String email = "status@test.com";
+        createUser(email);
+        Tool tool = createTool("Llave");
 
-        Tool tool = toolRepositorie.findById(toolId).orElseThrow();
+        ToolStatusDto dto = new ToolStatusDto();
+        dto.setEmail(email);
+        dto.setIdTool(tool.getIdTool());
+
         cardexService.saveCardexUpdateStatusTool(dto, tool);
 
-        assertTrue(cardexRepositorie.findAll().stream().anyMatch(c -> c.getTypeMove().startsWith("Tool update status")));
+        assertTrue(cardexRepositorie.findAll().stream()
+                .anyMatch(c -> c.getTypeMove().startsWith("Tool update status")));
     }
 
     @Test
-    @Order(6)
     void saveCardexRepairTool() {
-        ToolStatusDto dto = new ToolStatusDto();
-        dto.setEmail(userEmail);
-        dto.setIdTool(toolId);
+        String email = "repair@test.com";
+        createUser(email);
+        Tool tool = createTool("Gata");
 
-        Tool tool = toolRepositorie.findById(toolId).orElseThrow();
+        ToolStatusDto dto = new ToolStatusDto();
+        dto.setEmail(email);
+        dto.setIdTool(tool.getIdTool());
+
         cardexService.saveCardexRepairTool(dto, tool);
 
-        assertTrue(cardexRepositorie.findAll().stream().anyMatch(c -> c.getTypeMove().startsWith("Tool Repair status")));
+        assertTrue(cardexRepositorie.findAll().stream()
+                .anyMatch(c -> c.getTypeMove().startsWith("Tool Repair status")));
     }
 
     @Test
-    @Order(7)
     void saveCardexDeleteTool() {
-        ToolStatusDto dto = new ToolStatusDto();
-        dto.setEmail(userEmail);
-        dto.setIdTool(toolId);
+        String email = "del@test.com";
+        createUser(email);
+        Tool tool = createTool("Clavos");
 
-        Tool tool = toolRepositorie.findById(toolId).orElseThrow();
+        ToolStatusDto dto = new ToolStatusDto();
+        dto.setEmail(email);
+        dto.setIdTool(tool.getIdTool());
+
         cardexService.saveCardexDeleteTool(dto, tool);
 
         assertTrue(cardexRepositorie.findAll().stream().anyMatch(c -> "Tool Delete".equals(c.getTypeMove())));
     }
 
     @Test
-    @Order(8)
     void saveCardexReturnLoan() {
+        String email = "return@test.com";
+        createUser(email);
+        Tool tool = createTool("Taladro");
+        Client client = createClient("44.444.444-4");
+        Loan loan = createLoan(client, tool);
+
         ReturnLoanDto dto = new ReturnLoanDto();
-        dto.setEmail(userEmail);
-        dto.setLoanId(loanId);
+        dto.setEmail(email);
+        dto.setLoanId(loan.getLoanId());
 
         cardexService.saveCardexReturnLoan(dto);
+
         assertTrue(cardexRepositorie.findAll().stream().anyMatch(c -> "Loan Finished".equals(c.getTypeMove())));
     }
 
     @Test
-    @Order(9)
+    void saveCardexReturnLoanDamage() { // Test Faltante Agregado
+        String email = "damage@test.com";
+        createUser(email);
+        Tool tool = createTool("Martillo Roto");
+        Client client = createClient("55.555.555-5");
+        Loan loan = createLoan(client, tool);
+
+        ReturnLoanDto dto = new ReturnLoanDto();
+        dto.setEmail(email);
+        dto.setLoanId(loan.getLoanId());
+
+        cardexService.saveCardexReturnLoanDamage(dto);
+
+        List<Cardex> results = cardexRepositorie.findAll();
+        assertTrue(results.stream().anyMatch(c -> c.getDescription().contains("damaged")));
+    }
+
+    @Test
+    void saveCardexReturnLoanDelete() { // Test Faltante Agregado
+        String email = "reploan@test.com";
+        createUser(email);
+        Tool tool = createTool("Sierra Perdida");
+        Client client = createClient("66.666.666-6");
+        Loan loan = createLoan(client, tool);
+
+        ReturnLoanDto dto = new ReturnLoanDto();
+        dto.setEmail(email);
+        dto.setLoanId(loan.getLoanId());
+
+        cardexService.saveCardexReturnLoanDelete(dto);
+
+        List<Cardex> results = cardexRepositorie.findAll();
+        assertTrue(results.stream().anyMatch(c -> c.getDescription().contains("replaced")));
+    }
+
+    @Test
     void findAllDto() {
+        // Generar un dato para asegurar que la lista no venga vacía si la query lo requiere
+        String email = "find@test.com";
+        createUser(email);
+        Tool tool = createTool("TestFind");
+        CreateToolDto dto = new CreateToolDto();
+        dto.setEmail(email);
+        dto.setQuantity(1);
+        cardexService.saveCardexTool(dto, tool);
+
         List<CardexDto> dtos = cardexService.findAllDto();
-
         assertFalse(dtos.isEmpty());
     }
 
     @Test
-    @Order(10)
     void findForRangeDate() {
-        LocalDate start = LocalDate.now().minusDays(10);
-        LocalDate end = LocalDate.now().plusDays(10);
-        Long toolId = null;
+        // Crear movimiento
+        String email = "range@test.com";
+        createUser(email);
+        Tool tool = createTool("Rango");
+        CreateToolDto dto = new CreateToolDto();
+        dto.setEmail(email);
+        dto.setQuantity(1);
+        cardexService.saveCardexTool(dto, tool);
 
-        List<CardexDto> dtos = cardexService.findForRangeDate(start, end, toolId);
+        LocalDate start = LocalDate.now().minusDays(1);
+        LocalDate end = LocalDate.now().plusDays(1);
+
+        List<CardexDto> dtos = cardexService.findForRangeDate(start, end, null);
         assertFalse(dtos.isEmpty());
     }
 
     @Test
-    @Order(11)
     void findCardexTool() {
-        List<CardexDto> dtos = cardexService.findCardexTool(toolId);
-        System.out.println(toolId);
+        String email = "toolfin@test.com";
+        createUser(email);
+        Tool tool = createTool("ToolSpecific");
+        CreateToolDto dto = new CreateToolDto();
+        dto.setEmail(email);
+        dto.setQuantity(1);
+        cardexService.saveCardexTool(dto, tool);
+
+        List<CardexDto> dtos = cardexService.findCardexTool(tool.getIdTool());
+
         assertFalse(dtos.isEmpty());
-        assertEquals(toolId, dtos.get(0).getToolId());
+        // Validamos que el primer elemento corresponde al tool ID (asumiendo que el DTO tiene ese campo)
+        assertEquals(tool.getIdTool(), dtos.get(0).getToolId());
     }
 }

@@ -31,7 +31,7 @@ public interface LoanRepositorie extends JpaRepository<Loan,Long> {
     List<Loan> findActiveAndOnTimeLoans();
 
     //Return loan actives and delayed
-    @Query("SELECT l FROM Loan l WHERE l.loanStatus = true AND l.penalty = true")
+    @Query("SELECT l FROM Loan l WHERE l.loanStatus = true AND l.returnDate < CURRENT_DATE")
     List<Loan> findActiveAndDelayedLoans();
 
     //Return clients with loans delayed
