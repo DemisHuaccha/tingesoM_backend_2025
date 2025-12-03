@@ -13,7 +13,7 @@ public interface ClientService {
     List<Client> findDelayedClient();
     void updateCustomer(Client client, Long id);
     void deleteCustomer(Client client);
-    void updateStatusCustomer(Long idCustomer);
+    void updateStatusCustomer(Long idClient);
     void restrictClientsWithDelayedLoans();
     List<String> searchRuts(String partialRut);
 

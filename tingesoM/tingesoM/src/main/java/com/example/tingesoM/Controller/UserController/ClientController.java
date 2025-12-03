@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/customer")
-@CrossOrigin(origins="http://Localhost:8070")
+@RequestMapping("/api/client")
+@CrossOrigin(origins="http://localhost:8070")
 public class ClientController {
     @Autowired
     private ClientServiceImpl clientServiceImpl;
@@ -22,33 +22,39 @@ public class ClientController {
     @Autowired
     private LoanServiceImpl loanServiceImpl;
 
-    @PostMapping("/createCustomer")
-    public ResponseEntity<Client> createCustomer(@RequestBody CreateClientDto clientDto) {
+    @PostMapping("/createClient")
+    public ResponseEntity<Client> createClient(@RequestBody CreateClientDto clientDto) {
         Client client=clientServiceImpl.save(clientDto);
         cardexServiceImpl.saveCardexClient(clientDto,client);
         return ResponseEntity.ok(client);
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<Client>> getAllCustomers() {
+    public ResponseEntity<List<Client>> getAllClients() {
         List<Client> tools = clientServiceImpl.findAll();
         return ResponseEntity.ok(tools);
     }
 
-    @GetMapping("/getCustomer/{id}")
-    public ResponseEntity<Client> getCustomerById(@PathVariable Long id) {
+    @GetMapping("/get/{id}")
+    public ResponseEntity<Client> getClientById(@PathVariable Long id) {
         return ResponseEntity.ok(clientServiceImpl.findById(id));
     }
 
-    @GetMapping("/getCustomer/{name}")
-    public ResponseEntity<Client> getCustomerByName(@PathVariable String name) {
+    @GetMapping("/getByName/{name}")
+    public ResponseEntity<Client> getClientByName(@PathVariable String name) {
         return ResponseEntity.ok(clientServiceImpl.findByName(name));
     }
 
-    @PutMapping("/updateStatus/{idCustomer}")
-    public ResponseEntity<Client> updateStatusCustomer(@PathVariable Long idCustomer) {
-        clientServiceImpl.updateStatusCustomer(idCustomer);
-        return ResponseEntity.ok(clientServiceImpl.findById(idCustomer));
+    @PutMapping("/updateStatus/{idClient}")
+    public ResponseEntity<Client> updateStatusClient(@PathVariable Long idClient) {
+        clientServiceImpl.updateStatusCustomer(idClient);
+        return ResponseEntity.ok(clientServiceImpl.findById(idClient));
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Client> updateClient(@RequestBody Client client, @PathVariable Long id) {
+        clientServiceImpl.updateCustomer(client, id);
+        return ResponseEntity.ok(clientServiceImpl.findById(id));
     }
 
     @GetMapping("/getDelayedClients")

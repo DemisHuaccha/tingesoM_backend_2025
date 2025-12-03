@@ -13,7 +13,8 @@ public class Client {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idCustomer;
+    @Column(name = "id_customer")
+    private Long idClient;
 
     @Column(name = "firstname")
     private String firstName;

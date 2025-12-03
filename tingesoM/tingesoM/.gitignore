@@ -33,3 +33,5 @@ build/
 .vscode/
 
 .env
+
+build_error.txt

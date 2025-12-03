@@ -201,8 +201,18 @@ public class ToolServiceImpl implements ToolService {
     }
 
     @Override
+    public List<String> debugRanking() {
+        return loanRepositorie.debugRanking();
+    }
+
+    @Override
     public List<Tool> filterTools(ToolRankingDto toolDto){
         return toolRepositorie.findByNameCategoryAndLoanFee(toolDto.getNameTool(),toolDto.getCategoryTool(),toolDto.getFeeTool());
+    }
+
+    @Override
+    public List<Tool> searchToolsById(String idPrefix) {
+        return toolRepositorie.findAvailableByIdStartingWith(idPrefix);
     }
 
 }

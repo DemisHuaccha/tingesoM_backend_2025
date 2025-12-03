@@ -46,7 +46,7 @@ public class ClientServiceImpl implements ClientService {
     //Read
     @Override
     public Client findByName(String name){
-        return clientRepositorie.findCustomerByFirstName(name).orElse(null);
+        return clientRepositorie.findByFirstName(name).orElse(null);
     }
     @Override
     public Client findById(Long id){

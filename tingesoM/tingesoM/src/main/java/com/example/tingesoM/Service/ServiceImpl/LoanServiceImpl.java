@@ -68,7 +68,7 @@ public class LoanServiceImpl implements LoanService {
                     "Stock not available " + tool.getName());
         }
 
-        if (isToolAvailableForClient(client.getIdCustomer(), tool.getName(), tool.getCategory(), tool.getLoanFee())==Boolean.TRUE){
+        if (isToolAvailableForClient(client.getIdClient(), tool.getName(), tool.getCategory(), tool.getLoanFee())==Boolean.TRUE){
             throw new IllegalStateException("Client has a loan with same category, name and loan Fee tool ");
         }
 
@@ -220,7 +220,7 @@ public class LoanServiceImpl implements LoanService {
 
         // ... resto de lógica de liberar herramienta ...
         Tool tool = loan.getTool();
-        tool.setStatus(true);
+        tool.setStatus(false);
         tool.setUnderRepair(true);
         toolRepo.save(tool);
 
@@ -259,7 +259,7 @@ public class LoanServiceImpl implements LoanService {
         Tool tool = loan.getTool();
         tool.setStatus(false);
         tool.setUnderRepair(false);
-        tool.setDeleteStatus(false); // OJO: Verifica si esto debe ser true o false según tu lógica
+        tool.setDeleteStatus(true); // OJO: Verifica si esto debe ser true o false según tu lógica
         toolRepo.save(tool);
 
         int currentPrice = loan.getPriceToPay() != null ? loan.getPriceToPay() : 0;
@@ -307,9 +307,6 @@ public class LoanServiceImpl implements LoanService {
         return loanRepo.findAllWithClientAndToolIds();
     }
 
-    @Override
-    public List<Client> findClientDelayed(){
-        return loanRepo.findClientsWithDelayedLoans();
-    }
+
 
 }

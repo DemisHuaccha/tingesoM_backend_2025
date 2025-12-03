@@ -16,7 +16,7 @@ public interface LoanService {
 
     List<LoanResponseDto> findAll();
 
-    List<Client> findClientDelayed();
+
 
     Loan returnLoanDamageTool(Long loanId, LocalDate actualReturnDate);
 

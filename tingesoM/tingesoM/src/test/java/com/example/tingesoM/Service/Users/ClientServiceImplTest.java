@@ -56,7 +56,7 @@ class ClientServiceImplTest {
 
         Client saved = clientService.save(dto);
 
-        assertNotNull(saved.getIdCustomer());
+        assertNotNull(saved.getIdClient());
         assertEquals("12.345.678-9", saved.getRut());
         assertTrue(saved.getStatus());
     }
@@ -77,10 +77,10 @@ class ClientServiceImplTest {
     void findById() {
         Client original = createAndSaveClient("22.222.222-2", "Maria", "maria@mail.com");
 
-        Client found = clientService.findById(original.getIdCustomer());
+        Client found = clientService.findById(original.getIdClient());
 
         assertNotNull(found);
-        assertEquals(original.getIdCustomer(), found.getIdCustomer());
+        assertEquals(original.getIdClient(), found.getIdClient());
     }
 
     // 4. Test para FindAll (Read)
@@ -126,10 +126,10 @@ class ClientServiceImplTest {
         updates.setLastName("NuevoApellido");
         updates.setRut("66.666.666-6");
 
-        clientService.updateCustomer(updates, original.getIdCustomer());
+        clientService.updateCustomer(updates, original.getIdClient());
 
         // Verificar
-        Client updatedDb = clientRepositorie.findById(original.getIdCustomer()).orElseThrow();
+        Client updatedDb = clientRepositorie.findById(original.getIdClient()).orElseThrow();
         assertEquals("Actualizado", updatedDb.getFirstName());
         assertEquals("NuevoApellido", updatedDb.getLastName());
     }
@@ -140,9 +140,9 @@ class ClientServiceImplTest {
         Client client = createAndSaveClient("77.777.777-7", "StatusTest", "st@mail.com");
         assertTrue(client.getStatus()); // Empieza en true
 
-        clientService.updateStatusCustomer(client.getIdCustomer());
+        clientService.updateStatusCustomer(client.getIdClient());
 
-        Client updated = clientRepositorie.findById(client.getIdCustomer()).orElseThrow();
+        Client updated = clientRepositorie.findById(client.getIdClient()).orElseThrow();
         assertFalse(updated.getStatus()); // Ahora debe ser false
     }
 
@@ -184,8 +184,8 @@ class ClientServiceImplTest {
         clientService.restrictClientsWithDelayedLoans();
 
         // Verificar
-        Client c1Updated = clientRepositorie.findById(c1.getIdCustomer()).orElseThrow();
-        Client c2Updated = clientRepositorie.findById(c2.getIdCustomer()).orElseThrow();
+        Client c1Updated = clientRepositorie.findById(c1.getIdClient()).orElseThrow();
+        Client c2Updated = clientRepositorie.findById(c2.getIdClient()).orElseThrow();
 
         assertFalse(c1Updated.getStatus(), "El cliente moroso debe ser bloqueado");
         assertTrue(c2Updated.getStatus(), "El cliente al día no debe ser bloqueado");

@@ -36,6 +36,20 @@ public class ToolController {
         return ResponseEntity.ok(tools);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Tool> getToolById(@PathVariable Long id) {
+        Tool tool = toolService.findById(id);
+        if (tool == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(tool);
+    }
+
+    @GetMapping("/search/{id}")
+    public ResponseEntity<List<Tool>> searchTools(@PathVariable String id) {
+        return ResponseEntity.ok(toolService.searchToolsById(id));
+    }
+
     @GetMapping("/getAll")
     public ResponseEntity<List<Tool>> getAllTools() {
         List<Tool> tools = toolService.findAll();
@@ -92,6 +106,11 @@ public class ToolController {
     @GetMapping("/ranking")
     public ResponseEntity<List<ToolRankingDto>> rankingTools(){
         return ResponseEntity.ok(toolService.findAllToolLoanRanking());
+    }
+
+    @GetMapping("/debugRanking")
+    public ResponseEntity<List<String>> debugRanking() {
+        return ResponseEntity.ok(toolService.debugRanking());
     }
 
     @PostMapping("/filter")

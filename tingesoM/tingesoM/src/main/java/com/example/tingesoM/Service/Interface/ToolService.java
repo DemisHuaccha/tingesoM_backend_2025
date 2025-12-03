@@ -18,8 +18,10 @@ public interface ToolService {
     void updateStatusTool(ToolStatusDto toolDto);
     void underRepairTool(ToolStatusDto toolDto);
     List<ToolRankingDto> findAllToolLoanRanking();
+    List<String> debugRanking();
     List<Tool> filterTools(ToolRankingDto toolDto);
     List<GroupToolsDto> groupTools();
     List<String> getConditions();
     List<Tool> findAllNotDelete();
+    List<Tool> searchToolsById(String idPrefix);
 }

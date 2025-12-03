@@ -257,7 +257,7 @@ public class CardexServiceImpl implements CardexService {
         cardex.setLoan(loanRepositorie.findById(loanDto.getLoanId()).orElse(null));
         cardex.setTool(loan.get().getTool());
         cardex.setTypeMove("Loan Finished");
-        cardex.setAmount(null);
+        cardex.setAmount(loan.get().getPriceToPay());
         cardex.setDescription("User with email "+loanDto.getEmail() +" return loan with id: "+ loanDto.getLoanId());
         cardex.setMoveDate(LocalDate.now());
         cardex.setQuantity(1);
@@ -284,7 +284,7 @@ public class CardexServiceImpl implements CardexService {
         cardex.setLoan(loanRepositorie.findById(loanDto.getLoanId()).orElse(null));
         cardex.setTool(loan.get().getTool());
         cardex.setTypeMove("Loan Finished");
-        cardex.setAmount(null);
+        cardex.setAmount(loan.get().getPriceToPay());
         cardex.setDescription("User with email "+loanDto.getEmail() +" return loan with id: "+ loanDto.getLoanId() + ", And tool damaged");
         cardex.setMoveDate(LocalDate.now());
         cardex.setQuantity(1);
@@ -311,7 +311,7 @@ public class CardexServiceImpl implements CardexService {
         cardex.setLoan(loanRepositorie.findById(loanDto.getLoanId()).orElse(null));
         cardex.setTool(loan.get().getTool());
         cardex.setTypeMove("Loan Finished");
-        cardex.setAmount(null);
+        cardex.setAmount(loan.get().getPriceToPay());
         cardex.setDescription("User with email "+loanDto.getEmail() +" return loan with id: "+ loanDto.getLoanId()+", And the tool needs to be replaced");
         cardex.setMoveDate(LocalDate.now());
         cardex.setQuantity(1);

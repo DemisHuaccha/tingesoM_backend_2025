@@ -270,4 +270,22 @@ class ToolServiceImplTest {
         assertNotNull(groups);
         // La validación profunda depende de la query en el repositorio
     }
+    @Test
+    void searchToolsById() {
+        Tool t1 = createAndSaveTool("Searchable Tool");
+        String idStr = t1.getIdTool().toString();
+
+        // Busqueda exacta
+        List<Tool> resultsExact = toolService.searchToolsById(idStr);
+        assertFalse(resultsExact.isEmpty());
+        assertEquals(t1.getIdTool(), resultsExact.get(0).getIdTool());
+
+        // Busqueda parcial (prefijo)
+        if (idStr.length() > 1) {
+            String prefix = idStr.substring(0, 1);
+            List<Tool> resultsPartial = toolService.searchToolsById(prefix);
+            assertFalse(resultsPartial.isEmpty());
+            assertTrue(resultsPartial.stream().anyMatch(t -> t.getIdTool().equals(t1.getIdTool())));
+        }
+    }
 }

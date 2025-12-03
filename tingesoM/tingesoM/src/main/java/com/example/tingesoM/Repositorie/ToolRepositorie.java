@@ -27,6 +27,9 @@ public interface ToolRepositorie extends JpaRepository<Tool,Long> {
                         """)
     int countAvailableByNameAndCategory(@Param("name") String name, @Param("category") String category, @Param("loanFee") Integer loanFee);
 
+    @Query("SELECT t FROM Tool t WHERE CAST(t.idTool AS string) LIKE CONCAT(:idPrefix, '%') AND t.status = true AND t.underRepair = false AND t.deleteStatus = false")
+    List<Tool> findAvailableByIdStartingWith(@Param("idPrefix") String idPrefix);
+
 
     @Query("""
             SELECT t FROM Tool t WHERE 
