@@ -5,19 +5,6 @@ import com.example.tingesoM.Entities.User;
 import com.example.tingesoM.Service.ServiceImpl.Users.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/user")
-@CrossOrigin(origins="http://Localhost:8070")
-public class UserController {
-
-    @Autowired
-    private UserServiceImpl userService;
-
-    @PostMapping("/createUser")
     public ResponseEntity<CreateUserDto> createUser(@RequestBody CreateUserDto user) {
         userService.save(user);
         return ResponseEntity.ok(user);

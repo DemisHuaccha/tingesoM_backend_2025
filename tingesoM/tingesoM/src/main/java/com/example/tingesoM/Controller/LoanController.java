@@ -9,19 +9,6 @@ import com.example.tingesoM.Entities.Tool;
 import com.example.tingesoM.Service.ServiceImpl.CardexServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import com.example.tingesoM.Service.ServiceImpl.LoanServiceImpl;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.List;
-
-@CrossOrigin(origins = "http://localhost:8070")
-@RestController
-@RequestMapping("/api/Loan")
-public class LoanController {
-
-    @Autowired
-    private LoanServiceImpl loanService;
 
     @Autowired
     private CardexServiceImpl cardexServiceImpl;
