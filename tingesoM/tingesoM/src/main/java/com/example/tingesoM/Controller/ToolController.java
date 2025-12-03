@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = {"http://localhost:8070", "http://localhost:5173", "http://localhost", "http://127.0.0.1"})
 @RestController
 @RequestMapping("/api/tool")
 public class ToolController {

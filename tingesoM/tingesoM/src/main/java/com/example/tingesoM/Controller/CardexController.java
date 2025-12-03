@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = {"http://localhost:8070", "http://localhost:5173", "http://localhost", "http://127.0.0.1"})
 @RequestMapping("/api/cardex")
 public class CardexController {
 
