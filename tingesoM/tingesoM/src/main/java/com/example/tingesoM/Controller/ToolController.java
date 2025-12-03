@@ -7,6 +7,19 @@ import com.example.tingesoM.Dtos.ToolStatusDto;
 import com.example.tingesoM.Entities.Tool;
 import com.example.tingesoM.Service.ServiceImpl.CardexServiceImpl;
 import com.example.tingesoM.Service.ServiceImpl.ToolServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@CrossOrigin(origins = "*")
+@RestController
+@RequestMapping("/api/tool")
+public class ToolController {
+
+    @Autowired
+    private ToolServiceImpl toolService;
     @Autowired
     private CardexServiceImpl cardexServiceImpl;
 
